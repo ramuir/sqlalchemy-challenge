@@ -97,6 +97,21 @@ def tobs():
 
     return jsonify(lastyear_temps)
 
+
+@app.route("/api/v1.0/<start>")
+def start(start):
+
+    session = Session(engine)
+
+    start_date = dt.datetime.strptime(start, '%y-%m-%d')
+
+    query = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
+        filter(Measurement.date >= start_date).all() 
+
+    session.close()
+
+    return jsonify(query)
+
 if __name__ == '__main__':
     app.run(debug=True)
 
